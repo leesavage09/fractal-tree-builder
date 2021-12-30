@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 import PureCanvas from './pure-canvas'
 
-const Canvas = ({ drawProps }) => {
-    const [ctx, setCtx] = useState(false)
+const Canvas = ({ drawProps }: { drawProps: any }) => {
+    const [ctx, setCtx] = useState<any>()
 
     useEffect(() => {
-        if (!ctx) return
+        if (!ctx || !drawProps) return
 
-        drawProps.map((prop) => {
+        drawProps.map((prop: any) => {
 
-            // ctx.strokeStyle = '#eee';
-            // ctx.fillStyle = '#530';
-            // ctx.shadowBlur = 20;
-            // ctx.shadowColor = '#222';
+            ctx.strokeStyle = '#eee';
+            ctx.fillStyle = '#530';
+            ctx.shadowBlur = 7;
+            ctx.shadowColor = '#222';
 
             let topRightX = 0 + (prop.width / 2);
             let topRightY = -prop.length;
@@ -32,7 +32,7 @@ const Canvas = ({ drawProps }) => {
             ctx.beginPath();
             ctx.moveTo(topRightX, topRightY);
 
-            const bend = 0.5
+            const bend = 4
 
             ctx.bezierCurveTo(topRightX, topRightY, (topRightX) + (topRightY / bend), topRightY / 2, bottomRightX, bottomRightY);
             ctx.lineTo(bottomLeftX, bottomLeftY);
