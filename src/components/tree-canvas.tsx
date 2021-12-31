@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import Canvas, { dimentions } from './canvas'
+import Canvas, { dimentions, DrawSettings } from './canvas'
 import useAnimationFrame from '../hooks/use-animation-frame'
 import { getTreeBuilderWorker, Branch, TreeBuilderSettings } from "../web-worker/tree-builder.worker";
 
 export type { Branch } from '../web-worker/tree-builder.worker'
+export type { DrawSettings } from './canvas'
 
-const TreeCanvas = ({ rootBranch, callBackDone, dimentions }: { rootBranch: Branch | null, callBackDone: Function, dimentions: dimentions }) => {
+const TreeCanvas = ({ rootBranch, drawSettings, callBackDone, dimentions }: { rootBranch: Branch | null, drawSettings: DrawSettings, callBackDone: Function, dimentions: dimentions }) => {
   const treeParts: React.MutableRefObject<Array<Array<Branch>>> = useRef([[]]);
   const [drawProps, setDrawProps] = useState<Array<Branch>>([])
   const [version, setVersion] = useState(0)
@@ -49,7 +50,7 @@ const TreeCanvas = ({ rootBranch, callBackDone, dimentions }: { rootBranch: Bran
     }
   })
 
-  return <Canvas drawProps={drawProps} version={version} dimentions={dimentions} />
+  return <Canvas drawProps={drawProps} version={version} dimentions={dimentions} drawSettings={drawSettings} />
 }
 
 export default TreeCanvas

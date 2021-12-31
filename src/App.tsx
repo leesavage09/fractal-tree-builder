@@ -1,10 +1,18 @@
 import { useState } from 'react'
-import TreeCanvas, { Branch } from './components/tree-canvas'
+import TreeCanvas, { Branch, DrawSettings } from './components/tree-canvas'
 
 function App() {
   const [rootBranch, setRootBranch] = useState<Branch | null>(null)
   const [loading, setLoading] = useState(false)
   const [dimentions, setDimentions] = useState({ width: 700, height: 700 })
+  
+  const drawSettings: DrawSettings = {
+    strokeStyle: '#eee',
+    fillStyle: '#530',
+    shadowBlur: 7,
+    shadowColor: '#222',
+    bend: 10
+  }
 
   const createTree = () => {
     setLoading(true)
@@ -32,7 +40,7 @@ function App() {
 
   return (
     <div>
-      <TreeCanvas dimentions={dimentions} rootBranch={rootBranch} callBackDone={finishedTree} />
+      <TreeCanvas dimentions={dimentions} rootBranch={rootBranch} callBackDone={finishedTree} drawSettings={drawSettings} />
       <button disabled={loading} onClick={createTree}>Genorate</button>
       <button disabled={!loading} onClick={cancelTree}>Cancel</button>
     </div>
