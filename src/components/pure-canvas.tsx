@@ -1,12 +1,21 @@
 import { memo } from "react";
 
-const PureCanvas = memo<{ contextRef: Function }>(
-    ({ contextRef }) => {
+export interface dimentions { width: number, height: number }
+
+const PureCanvas = memo<{ contextRef: Function, dimentions: dimentions }>(
+    ({ contextRef, dimentions }) => {
         return (
-            <canvas width="700" height="700"
+            <canvas width={dimentions.width} height={dimentions.height}
                 ref={node => node ? contextRef(node.getContext('2d')) : null}
             />
         )
-    }, () => true)
+    }, (prevProps, nextProps) => {
+        if (prevProps.dimentions.width != nextProps.dimentions.width || prevProps.dimentions.height != nextProps.dimentions.height) {
+            return false
+        }
+        else {
+            return true
+        }
+    })
 
 export default PureCanvas
