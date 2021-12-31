@@ -1,28 +1,34 @@
 import React, { useState, useEffect, useRef } from "react";
-import Canvas from './canvas'
+import Canvas, { dimentions } from './canvas'
 import useAnimationFrame from '../hooks/use-animation-frame'
-import { WorkerBuilder, treeBuilder } from "../web-worker/tree-builder.worker";
-import { Branch } from '../web-worker/tree-builder.worker'
-import {dimentions} from './pure-canvas'
+import { getTreeBuilderWorker, Branch, TreeBuilderSettings } from "../web-worker/tree-builder.worker";
 
-const TreeCanvas = ({ rootBranch, callBackDone, dimentions }: { rootBranch: Branch | null, callBackDone:Function, dimentions:dimentions }) => {
+export type { Branch } from '../web-worker/tree-builder.worker'
+
+const TreeCanvas = ({ rootBranch, callBackDone, dimentions }: { rootBranch: Branch | null, callBackDone: Function, dimentions: dimentions }) => {
   const treeParts: React.MutableRefObject<Array<Array<Branch>>> = useRef([[]]);
   const [drawProps, setDrawProps] = useState<Array<Branch>>([])
   const [version, setVersion] = useState(0)
 
   useEffect(() => {
-    setVersion(version+1)
     treeParts.current = [[]]
     if (!rootBranch) return
-    const worker = WorkerBuilder(treeBuilder)
+
+    const treeSettings: TreeBuilderSettings = {
+      tree: [[rootBranch]],
+      maxTreeLength: 5
+    }
+
+    const worker = getTreeBuilderWorker()
     worker.onmessage = (message) => {
       if (message) {
+        setVersion(version + 1)
         treeParts.current = message.data
         callBackDone("Finished")
         worker.terminate()
       }
     };
-    worker.postMessage([[rootBranch]]);
+    worker.postMessage(treeSettings);
     return () => {
       worker.terminate()
     }
@@ -32,10 +38,10 @@ const TreeCanvas = ({ rootBranch, callBackDone, dimentions }: { rootBranch: Bran
     if (treeParts.current.length >= 1) {
       let parts = treeParts.current.shift()
       let drawParts = parts
-       
+
       if (parts && drawParts) {
-        if (parts.length>500) {
-          drawParts = parts.splice(0,500)
+        if (parts.length > 500) {
+          drawParts = parts.splice(0, 500)
           treeParts.current.unshift(parts)
         }
         setDrawProps(drawParts)

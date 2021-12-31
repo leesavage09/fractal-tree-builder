@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import PureCanvas, { dimentions } from './pure-canvas'
 import { Branch } from '../web-worker/tree-builder.worker'
 
-interface drawProps {
-    branches: Array<Branch>
-
-}
+export type { dimentions } from './pure-canvas'
 
 const Canvas = ({ drawProps, version, dimentions }: { drawProps: Array<Branch>, version: number, dimentions: dimentions }) => {
     const [ctx, setCtx] = useState<CanvasRenderingContext2D>()
 
     useEffect(() => {
-        if (!ctx || !drawProps) return
+        if (!ctx) return
         drawProps.map((branch: Branch) => {
             // if (branch.depth == 0) ctx.clearRect(0, 0, 700, 700);//TODO fix size
 
@@ -60,9 +57,8 @@ const Canvas = ({ drawProps, version, dimentions }: { drawProps: Array<Branch>, 
 
 
     useEffect(() => {
-        console.log(version)
         if (!ctx) return
-        ctx.clearRect(0, 0, dimentions.width, dimentions.height);//TODO fix size: ;
+        ctx.clearRect(0, 0, dimentions.width, dimentions.height);
     }, [version])
 
 

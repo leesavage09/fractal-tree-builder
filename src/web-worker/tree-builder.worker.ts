@@ -7,20 +7,25 @@ export interface Branch {
     width: number
 }
 
-//TODO import scripts
+export interface TreeBuilderSettings {
+    tree: Array<Array<Branch>>
+    maxTreeLength: number
+}
 
-export const treeBuilder = () => {
+//TODO import scripts
+const treeBuilder = () => {
 
     // eslint-disable-next-line no-restricted-globals
-    self.onmessage = (event) => {
-        const tree = createTree(event.data, 10)
+    self.onmessage = ({data}) => {
+        const tree = createTree(data)
         postMessage(tree);
     }
 
 
     // given a tree and a max tree length grow the tree to max length and return
-    const createTree = (tree: Array<Array<Branch>>, maxTreeLength: number): Array<Array<Branch>> => {
-        if (tree.length >= maxTreeLength) return tree
+    const createTree = (settings: TreeBuilderSettings): Array<Array<Branch>> => {
+        const tree = settings.tree
+        if (tree.length >= settings.maxTreeLength) return tree
 
         const lastBranches = tree[tree.length - 1]
         const nextBranches_arr = lastBranches.map((branch) => {
@@ -28,7 +33,7 @@ export const treeBuilder = () => {
         })
         tree.push(nextBranches_arr.flat())
 
-        return createTree(tree, maxTreeLength)
+        return createTree(settings)
     }
 
     //takes a branch and returns the child branches
@@ -62,8 +67,8 @@ export const treeBuilder = () => {
 
 }
 
-export const WorkerBuilder = (worker: Function) => {
-    const code = worker.toString();
+export const getTreeBuilderWorker = () => {
+    const code = treeBuilder.toString();
     const blob = new Blob([`(${code})()`]);
     return new Worker(URL.createObjectURL(blob));
 }
