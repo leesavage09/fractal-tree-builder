@@ -5,20 +5,16 @@ import { getTreeBuilderWorker, Branch, TreeBuilderSettings } from "../web-worker
 
 export type { Branch } from '../web-worker/tree-builder.worker'
 export type { DrawSettings } from './canvas'
+export type { TreeBuilderSettings } from '../web-worker/tree-builder.worker'
 
-const TreeCanvas = ({ rootBranch, drawSettings, callBackDone, dimentions }: { rootBranch: Branch | null, drawSettings: DrawSettings, callBackDone: Function, dimentions: dimentions }) => {
+const TreeCanvas = ({ drawSettings, builderSettings, callBackDone, dimentions }: { drawSettings: DrawSettings, builderSettings:TreeBuilderSettings|null, callBackDone: Function, dimentions: dimentions }) => {
   const treeParts: React.MutableRefObject<Array<Array<Branch>>> = useRef([[]]);
   const [drawProps, setDrawProps] = useState<Array<Branch>>([])
   const [version, setVersion] = useState(0)
 
   useEffect(() => {
     treeParts.current = [[]]
-    if (!rootBranch) return
-
-    const treeSettings: TreeBuilderSettings = {
-      tree: [[rootBranch]],
-      maxTreeLength: 5
-    }
+    if (!builderSettings) return
 
     const worker = getTreeBuilderWorker()
     worker.onmessage = (message) => {
@@ -29,11 +25,11 @@ const TreeCanvas = ({ rootBranch, drawSettings, callBackDone, dimentions }: { ro
         worker.terminate()
       }
     };
-    worker.postMessage(treeSettings);
+    worker.postMessage(builderSettings);
     return () => {
       worker.terminate()
     }
-  }, [rootBranch])
+  }, [builderSettings])
 
   useAnimationFrame((deltaTime: number) => {
     if (treeParts.current.length >= 1) {
