@@ -23,10 +23,13 @@ const TreeCanvas = ({ drawSettings, builderSettings, callBackDone, dimentions, c
         setTree(message.data)
         callBackDone("Finished")
         worker.terminate()
+        console.log("worker.terminate: finished")
       }
     };
     worker.postMessage(builderSettings);
     return () => {
+
+      console.log("worker.terminate: cleanup")
       worker.terminate()
     }
   }, [builderSettings])
@@ -34,7 +37,7 @@ const TreeCanvas = ({ drawSettings, builderSettings, callBackDone, dimentions, c
   useEffect(() => {
     setVersion(version + 1)
     treeParts.current = cloneDeep(tree)
-  }, [dimentions, tree])
+  }, [dimentions, tree, drawSettings])
 
   useAnimationFrame((deltaTime: number) => {
     if (treeParts.current.length >= 1) {
