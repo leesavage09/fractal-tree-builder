@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import PureCanvas, { dimentions } from './pure-canvas'
 import { Branch } from '../web-worker/tree-builder.worker'
-import { FuzzyNumber } from '../web-worker/tree-builder.worker'
+import { FuzzyNumber, defineNumber } from '../web-worker/tree-builder.worker'
 
 export type { dimentions } from './pure-canvas'
 
@@ -10,13 +10,8 @@ export interface DrawSettings {
     fillStyle: string
     shadowBlur: number
     shadowColor: string
-    bend: FuzzyNumber | undefined
+    bend: FuzzyNumber
     wireframe: boolean
-}
-
-const defineNumber = (fuzzy: FuzzyNumber): number => {
-    const variance = Math.random() * (fuzzy.maxNumber - fuzzy.minNumber)
-    return fuzzy.minNumber + variance
 }
 
 const Canvas = ({ drawProps, drawSettings, version, dimentions, className }: { drawProps: Array<Branch>, drawSettings: DrawSettings, version: number, dimentions: dimentions, className: string }) => {
@@ -42,28 +37,22 @@ const Canvas = ({ drawProps, drawSettings, version, dimentions, className }: { d
             let bottomLeftY = 0;
 
             ctx.save()
-            ctx.translate(branch.x+(ctx.canvas.width/2), branch.y+ctx.canvas.height);
+            ctx.translate(branch.x + (ctx.canvas.width / 2), branch.y + ctx.canvas.height);
             ctx.rotate(branch.angle * Math.PI / 180);
 
             ctx.beginPath();
             ctx.moveTo(topRightX, topRightY);
-            if (bend) {
-                const thisBend = defineNumber(bend) * branch.width
-                ctx.quadraticCurveTo(
-                    bottomRightX - thisBend, topRightY / 2,
-                    bottomRightX, bottomRightY);
 
-                ctx.lineTo(bottomLeftX, bottomLeftY);
+            const thisBend = defineNumber(bend) * branch.width
+            ctx.quadraticCurveTo(
+                bottomRightX - thisBend, topRightY / 2,
+                bottomRightX, bottomRightY);
 
-                ctx.quadraticCurveTo(
-                    topLeftX - thisBend, topLeftY / 2,
-                    topLeftX, topLeftY);
-            }
-            else {
-                ctx.lineTo(topLeftX, topLeftY);
-                ctx.lineTo(bottomLeftX, bottomLeftY);
-                ctx.lineTo(bottomRightX, bottomRightY);
-            }
+            ctx.lineTo(bottomLeftX, bottomLeftY);
+
+            ctx.quadraticCurveTo(
+                topLeftX - thisBend, topLeftY / 2,
+                topLeftX, topLeftY);
 
             ctx.translate(0, -branch.length);
             ctx.arc(0, 0, branch.nextWidth / 2, 0, 2 * Math.PI);
@@ -74,8 +63,6 @@ const Canvas = ({ drawProps, drawSettings, version, dimentions, className }: { d
             ctx.stroke();
             ctx.restore();
         })
-
-
     }, [drawProps])
 
 

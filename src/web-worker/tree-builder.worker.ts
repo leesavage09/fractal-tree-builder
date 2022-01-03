@@ -30,6 +30,11 @@ export interface TreeBuilderSettings {
     }
 }
 
+export const defineNumber = (fuzzy: FuzzyNumber): number => {
+    const variance = Math.random() * (fuzzy.maxNumber - fuzzy.minNumber)
+    return fuzzy.minNumber + variance
+}
+
 //TODO import scripts
 const treeBuilder = () => {
 

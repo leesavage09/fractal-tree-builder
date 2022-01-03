@@ -23,13 +23,10 @@ const TreeCanvas = ({ drawSettings, builderSettings, callBackDone, dimentions, c
         setTree(message.data)
         callBackDone("Finished")
         worker.terminate()
-        console.log("worker.terminate: finished")
       }
     };
     worker.postMessage(builderSettings);
     return () => {
-
-      console.log("worker.terminate: cleanup")
       worker.terminate()
     }
   }, [builderSettings])
