@@ -11,27 +11,44 @@ function App() {
     fillStyle: '#530',
     shadowBlur: 7,
     shadowColor: '#222',
-    bend: 10
+    bend: -30 //RANGE
+    //Wireframe
+  }
+
+  const treeBuilderSettings: TreeBuilderSettings = {
+    tree: [[{
+      depth: 0,
+      x: 300,
+      y: 600,
+      length: 100 + Math.random() * 100,
+      angle: 0 - Math.random() * 50,
+      width: Math.random() * 10
+    }]],
+    maxTreeLength: 5
+
+    //next length RANGE
+    //next width RANGE
+
+    //main trunk
+      //survival RANGE
+      //angle RANGE
+
+    //side branches
+      //survival RANGE
+      //angle RANGE
+
+    //Fruit Chance
+    //Leafe Chance
+
   }
 
   const createTree = () => {
     setLoading(true)
-    const treeSettings: TreeBuilderSettings = {
-      tree: [[{
-        depth: 0,
-        x: 300,
-        y: 600,
-        length: 50 + Math.random() * 100,
-        angle: 25 - Math.random() * 50,
-        width: Math.random() * 10
-      }]],
-      maxTreeLength: 19
-    }
-    setTreeSettings(treeSettings)
+    setTreeSettings(treeBuilderSettings)
   }
 
   const finishedTree = (callbackMessage: string) => {
-    console.log(callbackMessage)
+    // console.log(callbackMessage)
     setLoading(false)
   }
 

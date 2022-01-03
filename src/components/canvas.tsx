@@ -39,9 +39,15 @@ const Canvas = ({ drawProps, drawSettings, version, dimentions }: { drawProps: A
             ctx.beginPath();
             ctx.moveTo(topRightX, topRightY);
             if (bend) {
-                ctx.bezierCurveTo(topRightX, topRightY, (topRightX) + (topRightY / bend), topRightY / 2, bottomRightX, bottomRightY);
-                ctx.lineTo(bottomLeftX, bottomLeftY);
-                ctx.bezierCurveTo(bottomLeftX, bottomLeftY, (topLeftX) + (topRightY / bend), topRightY / 2, topLeftX, topLeftY);
+                ctx.quadraticCurveTo(
+                    bottomRightX-bend, topRightY/2, 
+                  bottomRightX, bottomRightY);
+
+                  ctx.lineTo(bottomLeftX, bottomLeftY);
+
+                  ctx.quadraticCurveTo(
+                    topLeftX-bend, topLeftY/2, 
+                    topLeftX, topLeftY);
             }
             else {
                 ctx.lineTo(topLeftX, topLeftY);
