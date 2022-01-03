@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import TreeCanvas, { DrawSettings, TreeBuilderSettings } from './components/tree-canvas'
-import {makeFuzzyNumber} from './web-worker/tree-builder.worker'
+import { FuzzyNumber } from './web-worker/tree-builder.worker'
 
 function App() {
   const [treeSettings, setTreeSettings] = useState<TreeBuilderSettings | null>(null)
@@ -8,12 +8,12 @@ function App() {
   const [dimentions, setDimentions] = useState({ width: 700, height: 700 })
 
   const drawSettings: DrawSettings = {
-    strokeStyle: '#eee',
+    strokeStyle: '#000',
     fillStyle: '#530',
     shadowBlur: 7,
     shadowColor: '#222',
-    bend: makeFuzzyNumber(-25,25),
-    wireframe: false 
+    bend: { minNumber: -25, maxNumber: 25 },
+    wireframe: false
   }
 
   const treeBuilderSettings: TreeBuilderSettings = {
@@ -21,22 +21,21 @@ function App() {
       depth: 0,
       x: 300,
       y: 600,
-      length: 100 + Math.random() * 100,
+      length: 50,
       angle: 0 - Math.random() * 1,
-      width: Math.random() * 10
+      width: 30
     }]],
-    maxTreeLength: 5
-
-    //next length RANGE
-    //next width RANGE
+    maxTreeLength: 5,
+    lengthMultiplier: { minNumber: 0.75, maxNumber: 1.5 },
+    widthMultiplier: { minNumber: 0.5, maxNumber: 1 },
 
     //main trunk
-      //survival RANGE
-      //angle RANGE
+    //survival RANGE
+    //angle RANGE
 
     //side branches
-      //survival RANGE
-      //angle RANGE
+    //survival RANGE
+    //angle RANGE
 
     //Fruit Chance
     //Leafe Chance

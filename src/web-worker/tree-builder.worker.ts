@@ -1,11 +1,7 @@
 
-export type FuzzyNumber = () => number;
-
-export const makeFuzzyNumber = (minNumber: number, maxNumber: number):FuzzyNumber => {
-    return () => {
-        const variance = Math.random()*(maxNumber-minNumber)
-        return minNumber+variance
-    }
+export type FuzzyNumber = {
+    minNumber: number
+    maxNumber: number
 }
 
 export interface Branch {
@@ -20,10 +16,17 @@ export interface Branch {
 export interface TreeBuilderSettings {
     tree: Array<Array<Branch>>
     maxTreeLength: number
+    lengthMultiplier: FuzzyNumber
+    widthMultiplier: FuzzyNumber
 }
 
 //TODO import scripts
 const treeBuilder = () => {
+
+    const defineNumber = (fuzzy: FuzzyNumber): number => {
+        const variance = Math.random() * (fuzzy.maxNumber - fuzzy.minNumber)
+        return fuzzy.minNumber + variance
+    }
 
     // eslint-disable-next-line no-restricted-globals
     self.onmessage = ({ data }) => {
@@ -39,7 +42,7 @@ const treeBuilder = () => {
 
         const lastBranches = tree[tree.length - 1]
         const nextBranches_arr = lastBranches.map((branch) => {
-            return nextBranchs(branch)
+            return nextBranchs(branch, settings)
         })
         tree.push(nextBranches_arr.flat())
 
@@ -47,23 +50,23 @@ const treeBuilder = () => {
     }
 
     //takes a branch and returns the child branches
-    const nextBranchs = ({ depth, angle, x, y, length, width }: Branch): Array<Branch> => {
+    const nextBranchs = ({ depth, angle, x, y, length, width }: Branch, settings: TreeBuilderSettings): Array<Branch> => {
         const pos = findNewPoint(x, y, angle, length)
 
         return [{
             depth: depth + 1,
             x: pos.x,
             y: pos.y,
-            length: length * 0.75,
+            length: length * defineNumber(settings.lengthMultiplier),
             angle: angle + 35,
-            width: width * 0.75
+            width: width * defineNumber(settings.widthMultiplier)
         }, {
             depth: depth + 1,
             x: pos.x,
             y: pos.y,
-            length: length * 0.75,
+            length: length * defineNumber(settings.lengthMultiplier),
             angle: angle - 35,
-            width: width * 0.75
+            width: width * defineNumber(settings.widthMultiplier)
         }]
     }
 

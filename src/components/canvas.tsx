@@ -14,6 +14,11 @@ export interface DrawSettings {
     wireframe: boolean
 }
 
+const defineNumber = (fuzzy: FuzzyNumber): number => {
+    const variance = Math.random() * (fuzzy.maxNumber - fuzzy.minNumber)
+    return fuzzy.minNumber + variance
+}
+
 const Canvas = ({ drawProps, drawSettings, version, dimentions }: { drawProps: Array<Branch>, drawSettings: DrawSettings, version: number, dimentions: dimentions }) => {
     const [ctx, setCtx] = useState<CanvasRenderingContext2D>()
 
@@ -41,7 +46,7 @@ const Canvas = ({ drawProps, drawSettings, version, dimentions }: { drawProps: A
             ctx.beginPath();
             ctx.moveTo(topRightX, topRightY);
             if (bend) {
-                const thisBend = bend()
+                const thisBend = defineNumber(bend)
                 console.log(thisBend)
                 ctx.quadraticCurveTo(
                     bottomRightX - thisBend, topRightY / 2,
