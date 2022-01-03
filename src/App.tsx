@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import TreeCanvas, { Branch, DrawSettings, TreeBuilderSettings } from './components/tree-canvas'
+import TreeCanvas, { DrawSettings, TreeBuilderSettings } from './components/tree-canvas'
+import {makeFuzzyNumber} from './web-worker/tree-builder.worker'
 
 function App() {
   const [treeSettings, setTreeSettings] = useState<TreeBuilderSettings | null>(null)
@@ -11,8 +12,8 @@ function App() {
     fillStyle: '#530',
     shadowBlur: 7,
     shadowColor: '#222',
-    bend: -30 //RANGE
-    //Wireframe
+    bend: makeFuzzyNumber(-25,25),
+    wireframe: false 
   }
 
   const treeBuilderSettings: TreeBuilderSettings = {
@@ -21,7 +22,7 @@ function App() {
       x: 300,
       y: 600,
       length: 100 + Math.random() * 100,
-      angle: 0 - Math.random() * 50,
+      angle: 0 - Math.random() * 1,
       width: Math.random() * 10
     }]],
     maxTreeLength: 5

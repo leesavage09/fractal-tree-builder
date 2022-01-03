@@ -1,3 +1,13 @@
+
+export type FuzzyNumber = () => number;
+
+export const makeFuzzyNumber = (minNumber: number, maxNumber: number):FuzzyNumber => {
+    return () => {
+        const variance = Math.random()*(maxNumber-minNumber)
+        return minNumber+variance
+    }
+}
+
 export interface Branch {
     depth: number
     angle: number
@@ -16,7 +26,7 @@ export interface TreeBuilderSettings {
 const treeBuilder = () => {
 
     // eslint-disable-next-line no-restricted-globals
-    self.onmessage = ({data}) => {
+    self.onmessage = ({ data }) => {
         const tree = createTree(data)
         postMessage(tree);
     }

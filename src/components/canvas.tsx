@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import PureCanvas, { dimentions } from './pure-canvas'
 import { Branch } from '../web-worker/tree-builder.worker'
+import {FuzzyNumber} from '../web-worker/tree-builder.worker'
 
 export type { dimentions } from './pure-canvas'
 
@@ -9,7 +10,8 @@ export interface DrawSettings {
     fillStyle: string
     shadowBlur: number
     shadowColor: string
-    bend: number | undefined
+    bend: FuzzyNumber | undefined
+    wireframe: boolean
 }
 
 const Canvas = ({ drawProps, drawSettings, version, dimentions }: { drawProps: Array<Branch>, drawSettings: DrawSettings, version: number, dimentions: dimentions }) => {
@@ -17,10 +19,10 @@ const Canvas = ({ drawProps, drawSettings, version, dimentions }: { drawProps: A
 
     useEffect(() => {
         if (!ctx) return
-        ctx.strokeStyle = drawSettings.strokeStyle 
-        ctx.fillStyle = drawSettings.fillStyle 
-        ctx.shadowBlur = drawSettings.shadowBlur 
-        ctx.shadowColor = drawSettings.shadowColor 
+        ctx.strokeStyle = drawSettings.strokeStyle
+        ctx.fillStyle = drawSettings.fillStyle
+        ctx.shadowBlur = drawSettings.shadowBlur
+        ctx.shadowColor = drawSettings.shadowColor
         const bend = drawSettings.bend
 
         drawProps.map((branch: Branch) => {
@@ -39,14 +41,16 @@ const Canvas = ({ drawProps, drawSettings, version, dimentions }: { drawProps: A
             ctx.beginPath();
             ctx.moveTo(topRightX, topRightY);
             if (bend) {
+                const thisBend = bend()
+                console.log(thisBend)
                 ctx.quadraticCurveTo(
-                    bottomRightX-bend, topRightY/2, 
-                  bottomRightX, bottomRightY);
+                    bottomRightX - thisBend, topRightY / 2,
+                    bottomRightX, bottomRightY);
 
-                  ctx.lineTo(bottomLeftX, bottomLeftY);
+                ctx.lineTo(bottomLeftX, bottomLeftY);
 
-                  ctx.quadraticCurveTo(
-                    topLeftX-bend, topLeftY/2, 
+                ctx.quadraticCurveTo(
+                    topLeftX - thisBend, topLeftY / 2,
                     topLeftX, topLeftY);
             }
             else {
@@ -56,7 +60,7 @@ const Canvas = ({ drawProps, drawSettings, version, dimentions }: { drawProps: A
             }
             ctx.closePath();
             ctx.stroke();
-            ctx.fill();
+            if (!drawSettings.wireframe) ctx.fill();
             ctx.restore();
         })
 
