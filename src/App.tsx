@@ -12,7 +12,7 @@ function App() {
     fillStyle: '#530',
     shadowBlur: 7,
     shadowColor: '#222',
-    bend: { minNumber: -25, maxNumber: 25 },
+    bend: { minNumber: -20, maxNumber: 20 },
     wireframe: false
   }
 
@@ -21,25 +21,20 @@ function App() {
       depth: 0,
       x: 300,
       y: 600,
-      length: 50,
+      length: 150,
       angle: 0 - Math.random() * 1,
-      width: 30
+      width: 20
     }]],
     maxTreeLength: 5,
-    lengthMultiplier: { minNumber: 0.75, maxNumber: 1.5 },
-    widthMultiplier: { minNumber: 0.5, maxNumber: 1 },
-
-    //main trunk
-    //survival RANGE
-    //angle RANGE
-
-    //side branches
-    //survival RANGE
-    //angle RANGE
-
+    lengthMultiplier: { minNumber: 0.75, maxNumber: 0.75 },
+    widthMultiplier: { minNumber: 0.55, maxNumber: 0.55 },
+    mainBranchSurvival: 90,
+    mainBranchAngle: { minNumber: -20, maxNumber: 20 },
+    sideBranchSurvival: 70,
+    sideBranchAngle: { minNumber: 20, maxNumber: 45 }
+    
     //Fruit Chance
     //Leafe Chance
-
   }
 
   const createTree = () => {

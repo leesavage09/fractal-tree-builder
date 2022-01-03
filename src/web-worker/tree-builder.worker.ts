@@ -18,6 +18,10 @@ export interface TreeBuilderSettings {
     maxTreeLength: number
     lengthMultiplier: FuzzyNumber
     widthMultiplier: FuzzyNumber
+    mainBranchSurvival: number
+    mainBranchAngle: FuzzyNumber
+    sideBranchSurvival: number
+    sideBranchAngle: FuzzyNumber
 }
 
 //TODO import scripts
@@ -53,21 +57,42 @@ const treeBuilder = () => {
     const nextBranchs = ({ depth, angle, x, y, length, width }: Branch, settings: TreeBuilderSettings): Array<Branch> => {
         const pos = findNewPoint(x, y, angle, length)
 
-        return [{
-            depth: depth + 1,
-            x: pos.x,
-            y: pos.y,
-            length: length * defineNumber(settings.lengthMultiplier),
-            angle: angle + 35,
-            width: width * defineNumber(settings.widthMultiplier)
-        }, {
-            depth: depth + 1,
-            x: pos.x,
-            y: pos.y,
-            length: length * defineNumber(settings.lengthMultiplier),
-            angle: angle - 35,
-            width: width * defineNumber(settings.widthMultiplier)
-        }]
+        const branches = []
+
+        if (settings.sideBranchSurvival > Math.random() * 100) {
+            branches.push({
+                depth: depth + 1,
+                x: pos.x,
+                y: pos.y,
+                length: length * defineNumber(settings.lengthMultiplier),
+                angle: angle + defineNumber(settings.sideBranchAngle),
+                width: width * defineNumber(settings.widthMultiplier)
+            })
+        }
+
+        if (settings.mainBranchSurvival > Math.random() * 100) {
+            branches.push({
+                depth: depth + 1,
+                x: pos.x,
+                y: pos.y,
+                length: length * defineNumber(settings.lengthMultiplier),
+                angle: angle + defineNumber(settings.mainBranchAngle),
+                width: width * defineNumber(settings.widthMultiplier)
+            })
+        }
+
+        if (settings.sideBranchSurvival > Math.random() * 100) {
+            branches.push({
+                depth: depth + 1,
+                x: pos.x,
+                y: pos.y,
+                length: length * defineNumber(settings.lengthMultiplier),
+                angle: angle + 0 - defineNumber(settings.sideBranchAngle),
+                width: width * defineNumber(settings.widthMultiplier)
+            })
+        }
+
+        return branches
     }
 
     const findNewPoint = (x: number, y: number, angle: number, distance: number) => {
