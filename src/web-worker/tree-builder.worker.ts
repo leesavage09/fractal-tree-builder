@@ -5,7 +5,6 @@ export type FuzzyNumber = {
 }
 
 export interface Branch {
-    depth: number
     angle: number
     x: number
     y: number
@@ -16,13 +15,19 @@ export interface Branch {
 
 export interface TreeBuilderSettings {
     tree: Array<Array<Branch>>
-    maxTreeLength: number
-    lengthMultiplier: FuzzyNumber
-    widthMultiplier: FuzzyNumber
-    mainBranchSurvival: number
-    mainBranchAngle: FuzzyNumber
-    sideBranchSurvival: number
-    sideBranchAngle: FuzzyNumber
+    maxTreeDepth: number
+    mainBranch: {
+        lengthMultiplier: FuzzyNumber
+        widthMultiplier: FuzzyNumber
+        survivalRate: number
+        nextAngle: FuzzyNumber
+    }
+    sideBranch: {
+        lengthMultiplier: FuzzyNumber
+        widthMultiplier: FuzzyNumber
+        survivalRate: number
+        nextAngle: FuzzyNumber
+    }
 }
 
 //TODO import scripts
@@ -43,7 +48,7 @@ const treeBuilder = () => {
     // given a tree and a max tree length grow the tree to max length and return
     const createTree = (settings: TreeBuilderSettings): Array<Array<Branch>> => {
         const tree = settings.tree
-        if (tree.length >= settings.maxTreeLength) return tree
+        if (tree.length >= settings.maxTreeDepth) return tree
 
         const lastBranches = tree[tree.length - 1]
         const nextBranches_arr = lastBranches.map((branch) => {
@@ -55,46 +60,42 @@ const treeBuilder = () => {
     }
 
     //takes a branch and returns the child branches
-    const nextBranchs = ({ depth, angle, x, y, length, width, nextWidth }: Branch, settings: TreeBuilderSettings): Array<Branch> => {
+    const nextBranchs = ({ angle, x, y, length, nextWidth }: Branch, settings: TreeBuilderSettings): Array<Branch> => {
         const pos = findNewPoint(x, y, angle, length)
 
         const branches = []
 
-        if (settings.sideBranchSurvival > Math.random() * 100) {
-            const thisWidth = nextWidth * defineNumber(settings.widthMultiplier)
-            const theNextWidth = thisWidth * defineNumber(settings.widthMultiplier)
+        if (settings.sideBranch.survivalRate > Math.random() * 100) {
+            const thisWidth = nextWidth * defineNumber(settings.sideBranch.widthMultiplier)
+            const theNextWidth = thisWidth * defineNumber(settings.sideBranch.widthMultiplier)
             branches.push({
-                depth: depth + 1,
                 x: pos.x,
                 y: pos.y,
-                length: length * defineNumber(settings.lengthMultiplier),
-                angle: angle + defineNumber(settings.sideBranchAngle),
+                length: length * defineNumber(settings.sideBranch.lengthMultiplier),
+                angle: angle + defineNumber(settings.sideBranch.nextAngle),
                 width: thisWidth,
                 nextWidth: theNextWidth
             })
         }
-
-        if (settings.mainBranchSurvival > Math.random() * 100) {
+        if (settings.mainBranch.survivalRate > Math.random() * 100) {
+            const nextAngle = Math.random()>0.5 ? angle-defineNumber(settings.mainBranch.nextAngle): angle+defineNumber(settings.mainBranch.nextAngle)
             branches.push({
-                depth: depth + 1,
                 x: pos.x,
                 y: pos.y,
-                length: length * defineNumber(settings.lengthMultiplier),
-                angle: angle + defineNumber(settings.mainBranchAngle),
+                length: length * defineNumber(settings.mainBranch.lengthMultiplier),
+                angle: nextAngle,
                 width: nextWidth,
-                nextWidth: nextWidth * defineNumber(settings.widthMultiplier)
+                nextWidth: nextWidth * defineNumber(settings.mainBranch.widthMultiplier)
             })
         }
-
-        if (settings.sideBranchSurvival > Math.random() * 100) {
-            const thisWidth = nextWidth * defineNumber(settings.widthMultiplier)
-            const theNextWidth = thisWidth * defineNumber(settings.widthMultiplier)
+        if (settings.sideBranch.survivalRate > Math.random() * 100) {
+            const thisWidth = nextWidth * defineNumber(settings.sideBranch.widthMultiplier)
+            const theNextWidth = thisWidth * defineNumber(settings.sideBranch.widthMultiplier)
             branches.push({
-                depth: depth + 1,
                 x: pos.x,
                 y: pos.y,
-                length: length * defineNumber(settings.lengthMultiplier),
-                angle: angle + 0 - defineNumber(settings.sideBranchAngle),
+                length: length * defineNumber(settings.sideBranch.lengthMultiplier),
+                angle: angle + 0 - defineNumber(settings.sideBranch.nextAngle),
                 width: thisWidth,
                 nextWidth: theNextWidth
             })
@@ -109,7 +110,6 @@ const treeBuilder = () => {
             y: Math.round(Math.sin((angle - 90) * Math.PI / 180) * distance + y)
         }
     }
-
 
 }
 

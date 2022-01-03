@@ -1,0 +1,19 @@
+body {
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    width:100vw;
+    height:100vh;
+
+}
+
+.settings {
+    background-color: #eee;
+    width:40vw;
+}
+
+.canvas {
+    width:60vw;
+}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import PureCanvas, { dimentions } from './pure-canvas'
 import { Branch } from '../web-worker/tree-builder.worker'
-import {FuzzyNumber} from '../web-worker/tree-builder.worker'
+import { FuzzyNumber } from '../web-worker/tree-builder.worker'
 
 export type { dimentions } from './pure-canvas'
 
@@ -19,13 +19,14 @@ const defineNumber = (fuzzy: FuzzyNumber): number => {
     return fuzzy.minNumber + variance
 }
 
-const Canvas = ({ drawProps, drawSettings, version, dimentions }: { drawProps: Array<Branch>, drawSettings: DrawSettings, version: number, dimentions: dimentions }) => {
+const Canvas = ({ drawProps, drawSettings, version, dimentions, className }: { drawProps: Array<Branch>, drawSettings: DrawSettings, version: number, dimentions: dimentions, className: string }) => {
     const [ctx, setCtx] = useState<CanvasRenderingContext2D>()
 
     useEffect(() => {
         if (!ctx) return
         ctx.strokeStyle = drawSettings.strokeStyle
         ctx.fillStyle = drawSettings.fillStyle
+        ctx.lineWidth = 0.5;
         // ctx.shadowBlur = drawSettings.shadowBlur
         // ctx.shadowColor = drawSettings.shadowColor
         const bend = drawSettings.bend
@@ -41,8 +42,9 @@ const Canvas = ({ drawProps, drawSettings, version, dimentions }: { drawProps: A
             let bottomLeftY = 0;
 
             ctx.save()
-            ctx.translate(branch.x, branch.y);
+            ctx.translate(branch.x+(ctx.canvas.width/2), branch.y+ctx.canvas.height);
             ctx.rotate(branch.angle * Math.PI / 180);
+
             ctx.beginPath();
             ctx.moveTo(topRightX, topRightY);
             if (bend) {
@@ -62,15 +64,12 @@ const Canvas = ({ drawProps, drawSettings, version, dimentions }: { drawProps: A
                 ctx.lineTo(bottomLeftX, bottomLeftY);
                 ctx.lineTo(bottomRightX, bottomRightY);
             }
-            ctx.closePath();
-            if (!drawSettings.wireframe) ctx.fill();
-            
-
 
             ctx.translate(0, -branch.length);
-            ctx.arc(0,0, branch.nextWidth / 2, 0, 2 * Math.PI);
-            
+            ctx.arc(0, 0, branch.nextWidth / 2, 0, 2 * Math.PI);
             if (!drawSettings.wireframe) ctx.fill();
+
+            ctx.closePath();
 
             ctx.stroke();
             ctx.restore();
@@ -87,7 +86,7 @@ const Canvas = ({ drawProps, drawSettings, version, dimentions }: { drawProps: A
 
 
     return (
-        <PureCanvas contextRef={setCtx} dimentions={dimentions} />
+        <PureCanvas className={className} contextRef={setCtx} dimentions={dimentions} />
     )
 }
 
