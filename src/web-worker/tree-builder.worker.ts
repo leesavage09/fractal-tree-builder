@@ -11,6 +11,7 @@ export interface Branch {
     y: number
     length: number
     width: number
+    nextWidth: number
 }
 
 export interface TreeBuilderSettings {
@@ -54,19 +55,22 @@ const treeBuilder = () => {
     }
 
     //takes a branch and returns the child branches
-    const nextBranchs = ({ depth, angle, x, y, length, width }: Branch, settings: TreeBuilderSettings): Array<Branch> => {
+    const nextBranchs = ({ depth, angle, x, y, length, width, nextWidth }: Branch, settings: TreeBuilderSettings): Array<Branch> => {
         const pos = findNewPoint(x, y, angle, length)
 
         const branches = []
 
         if (settings.sideBranchSurvival > Math.random() * 100) {
+            const thisWidth = nextWidth * defineNumber(settings.widthMultiplier)
+            const theNextWidth = thisWidth * defineNumber(settings.widthMultiplier)
             branches.push({
                 depth: depth + 1,
                 x: pos.x,
                 y: pos.y,
                 length: length * defineNumber(settings.lengthMultiplier),
                 angle: angle + defineNumber(settings.sideBranchAngle),
-                width: width * defineNumber(settings.widthMultiplier)
+                width: thisWidth,
+                nextWidth: theNextWidth
             })
         }
 
@@ -77,18 +81,22 @@ const treeBuilder = () => {
                 y: pos.y,
                 length: length * defineNumber(settings.lengthMultiplier),
                 angle: angle + defineNumber(settings.mainBranchAngle),
-                width: width * defineNumber(settings.widthMultiplier)
+                width: nextWidth,
+                nextWidth: nextWidth * defineNumber(settings.widthMultiplier)
             })
         }
 
         if (settings.sideBranchSurvival > Math.random() * 100) {
+            const thisWidth = nextWidth * defineNumber(settings.widthMultiplier)
+            const theNextWidth = thisWidth * defineNumber(settings.widthMultiplier)
             branches.push({
                 depth: depth + 1,
                 x: pos.x,
                 y: pos.y,
                 length: length * defineNumber(settings.lengthMultiplier),
                 angle: angle + 0 - defineNumber(settings.sideBranchAngle),
-                width: width * defineNumber(settings.widthMultiplier)
+                width: thisWidth,
+                nextWidth: theNextWidth
             })
         }
 

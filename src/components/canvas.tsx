@@ -26,14 +26,14 @@ const Canvas = ({ drawProps, drawSettings, version, dimentions }: { drawProps: A
         if (!ctx) return
         ctx.strokeStyle = drawSettings.strokeStyle
         ctx.fillStyle = drawSettings.fillStyle
-        ctx.shadowBlur = drawSettings.shadowBlur
-        ctx.shadowColor = drawSettings.shadowColor
+        // ctx.shadowBlur = drawSettings.shadowBlur
+        // ctx.shadowColor = drawSettings.shadowColor
         const bend = drawSettings.bend
 
         drawProps.map((branch: Branch) => {
-            let topRightX = 0 + (branch.width / 2);
+            let topRightX = 0 + (branch.nextWidth / 2);
             let topRightY = -branch.length;
-            let topLeftX = 0 - (branch.width / 2);
+            let topLeftX = 0 - (branch.nextWidth / 2);
             let topLeftY = -branch.length;
             let bottomRightX = branch.width / 2;
             let bottomRightY = 0;
@@ -46,8 +46,7 @@ const Canvas = ({ drawProps, drawSettings, version, dimentions }: { drawProps: A
             ctx.beginPath();
             ctx.moveTo(topRightX, topRightY);
             if (bend) {
-                const thisBend = defineNumber(bend)
-                console.log(thisBend)
+                const thisBend = defineNumber(bend) * branch.width
                 ctx.quadraticCurveTo(
                     bottomRightX - thisBend, topRightY / 2,
                     bottomRightX, bottomRightY);
@@ -64,8 +63,16 @@ const Canvas = ({ drawProps, drawSettings, version, dimentions }: { drawProps: A
                 ctx.lineTo(bottomRightX, bottomRightY);
             }
             ctx.closePath();
-            ctx.stroke();
             if (!drawSettings.wireframe) ctx.fill();
+            
+
+
+            ctx.translate(0, -branch.length);
+            ctx.arc(0,0, branch.nextWidth / 2, 0, 2 * Math.PI);
+            
+            if (!drawSettings.wireframe) ctx.fill();
+
+            ctx.stroke();
             ctx.restore();
         })
 

@@ -8,12 +8,12 @@ function App() {
   const [dimentions, setDimentions] = useState({ width: 700, height: 700 })
 
   const drawSettings: DrawSettings = {
-    strokeStyle: '#000',
-    fillStyle: '#530',
-    shadowBlur: 7,
-    shadowColor: '#222',
-    bend: { minNumber: -20, maxNumber: 20 },
-    wireframe: false
+    strokeStyle: 'rgb(55,38,25)',
+    fillStyle: 'rgb(55,38,25)',
+    shadowBlur: 20,
+    shadowColor: 'rgba(65,48,25,0.75)',
+    bend: { minNumber: -0.3, maxNumber: 0.3 },
+    wireframe: true
   }
 
   const treeBuilderSettings: TreeBuilderSettings = {
@@ -21,17 +21,18 @@ function App() {
       depth: 0,
       x: 300,
       y: 600,
-      length: 150,
+      length: 127,
       angle: 0 - Math.random() * 1,
-      width: 20
+      width: 71,
+      nextWidth: 50
     }]],
-    maxTreeLength: 5,
-    lengthMultiplier: { minNumber: 0.75, maxNumber: 0.75 },
-    widthMultiplier: { minNumber: 0.55, maxNumber: 0.55 },
+    maxTreeLength: 16,
+    lengthMultiplier: { minNumber: 0.5, maxNumber: 0.9 },
+    widthMultiplier: { minNumber: 0.3, maxNumber: 0.55 },
     mainBranchSurvival: 90,
     mainBranchAngle: { minNumber: -20, maxNumber: 20 },
-    sideBranchSurvival: 70,
-    sideBranchAngle: { minNumber: 20, maxNumber: 45 }
+    sideBranchSurvival: 75,
+    sideBranchAngle: { minNumber: 27, maxNumber: 35 }
     
     //Fruit Chance
     //Leafe Chance
